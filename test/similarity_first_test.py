@@ -6,12 +6,11 @@ from imaging_interview import preprocess_image_change_detection, compare_frames_
 
 # adjust: gaussian blur kernel, min contour area parameters
 
-def main():
-    # image paths
+def similarity_test():
+
     image1_path = 'data_samples/image1_1.png'
     image2_path = 'data_samples/image1_2.png'
     
-    # read images
     image1 = cv2.imread(image1_path)
     image2 = cv2.imread(image2_path)
     
@@ -21,8 +20,8 @@ def main():
         return
     
     # enable/disable showing images
-    show_images = False
-
+    show_images = True
+    
     # define GaussianBlur radius list parameter, adjust and see results
     gaussian_blur_kernel = [15] # higher kernel size results lower difference score
     
@@ -30,12 +29,8 @@ def main():
     image1_preprocessed = preprocess_image_change_detection(image1, gaussian_blur_kernel)
     image2_preprocessed = preprocess_image_change_detection(image2, gaussian_blur_kernel)
 
-    # display preprocessed images
-    #cv2.imshow('Preprocessed Image 1', image1_preprocessed)
-    #cv2.imshow('Preprocessed Image 2', image2_preprocessed)
-
     # define min_contour_area parameter, adjust and see the score
-    contour_area = 500
+    contour_area = 5000
     
     # compare previous and next frames
     # lower difference score means more similar images
@@ -59,4 +54,4 @@ def main():
         cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    main()
+    similarity_test()
