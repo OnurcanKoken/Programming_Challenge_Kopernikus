@@ -55,10 +55,10 @@ python similarity_dataset.py --dataset_path dataset
 
 * Firstly, it reads all .png images in the given path, then separates by `camera_id` key and stores image file names in lists. 
 * For each list of `camera_id`, first frame is picked as `current_frame`, and compared with the following frames (`next_frame`) in the list. 
-* To avoid any crush, when reading an image fails, it gives an error and continues to compare with the following frames. 
+* To avoid any crush, when image reading fails, it gives an error and continues to compare with the following frames. 
 * Preprocess images, apply Gaussian Blur filter and color mask.
-* Sizes of images are checked, and bigger image is resized before the comparison.
-* Two images are compared. If the score is smaller than the threshold, `next_frame` is removed from the dataset, otherwise update the `next_frame` with the following frame until the end of the list.
+* Sizes of images are checked, and the bigger image is resized before the comparison.
+* Two images are compared. If the score is smaller than the threshold, `next_frame` is removed from the dataset, otherwise, update the `next_frame` with the following frame until the end of the list.
 * Then go back to update `current_frame` and keep comparing with the following frames in the list.
 * The algorithm terminates when there is no frame left in each list of `camera_id`.
 
@@ -66,11 +66,11 @@ python similarity_dataset.py --dataset_path dataset
 
 I used `similarity_first_test.py` file, in the test folder, to make it easier to tune the parameters and observe the changes. Later, I created a `config.yaml` file to make it easier to adjust parameters for the actual solution, `similarity_dataset.py` file.
 
-* **gaussian_blur_kernel:** At first, I started testing with 3x3 kernel size and checked how blurry images become. I decided to increase the size by setting the parameter to [3, 5], and [5, 7] where it applies two blur twice. I kept the parameter **min_contour_area** as zero and checked how **difference_score** variable changes (it is the score returned from _compare_frames_change_detection()_). In the end, I decided to use a relatively large kernel size **15x15**, which applies high amount of blur. In terms of computation, it did not change the overall duration much compared to applying multiple small kernel sizes. However, it is also possible to apply small kernel sizes multiple times.
+* **gaussian_blur_kernel:** At first, I started testing with 3x3 kernel size and checked how blurry images become. I decided to increase the size by setting the parameter to [3, 5], and [5, 7] where it applies the filter twice. I kept the parameter **min_contour_area** as zero and checked how **difference_score** variable changes (it is the score returned from _compare_frames_change_detection()_). In the end, I decided to use a relatively large kernel size **15x15**, which applies high amount of blur. In terms of computation, it did not change the overall duration much compared to applying multiple small kernel sizes. However, it is also possible to apply small kernel sizes multiple times.
 
-* **min_contour_area:** After setting the **gaussian_blur_kernel**, I checked what **cv2.contourArea(c)** returns for each detected contour. I tested by comparing very similar, slightly different, and very different images. Since the score is calculated by summing up contour areas, and I tried to keep the score low to filter more images. So I decided to set this parameter to **1000**. To filter less images, it can be lower to around 500, which will make it to be more sensitive to small changes between two images.
+* **min_contour_area:** After setting the **gaussian_blur_kernel**, I checked what **cv2.contourArea(c)** returns for each detected contour. I tested by comparing very similar, slightly different, and very different images. Since the score is calculated by summing up contour areas, I tried to keep the score low to filter more images. So, I decided to set this parameter to **1000**. To filter fewer images, it can be lower to around 500, which will make it to be more sensitive to small changes between two images.
 
-* **similarity_threshold:** After setting **gaussian_blur_kernel** and **min_contour_area_**, I simply checked how the score changes on image pairs. It directly returns **0** for very similar images, and rapitly increases for similar (almost duplicated) images. So, at the begining I set this parameter to 2500 and applied over all dataset, and I thought there were still some similar images, so checked the scores calculated for those images and observed they were around 3000-4000. So, I decided to set this parameter to **5000**. To filter more, I think it can still be increased upto 7500, however to filter less, it can be decreased to 2500. I think this is a reasonable range for these parameters.
+* **similarity_threshold:** After setting **gaussian_blur_kernel** and **min_contour_area_**, I simply checked how the score changes on image pairs. It directly returns **0** for very similar images, and rapitly increases for similar (almost duplicated) images. At the begining, I set this parameter to 2500 and applied over all dataset, and I thought there were still some similar images, so checked the calculated scores for those images and observed they were around 3000-4000. So, I decided to set this parameter to **5000**. To filter more, I think it can still be increased up to 7500, however to filter less, it can be decreased to 2500. I think this is a reasonable range for these parameters.
 
 ## 4. What you would suggest to implement to improve data collection of unique cases in future?
 
@@ -84,7 +84,7 @@ I used `similarity_first_test.py` file, in the test folder, to make it easier to
 
 In my solution, I designed the algorithm and set the parameters to clean as many similar images as possible. I kept **gaussian_blur_kernel** and **min_contour_area** parameters high to lower the score calculated by the "compare_frames_change_detection" function. Considering the significant volume of data in real-world applications, simply just one camera capturing a footage for one day at 30 frames per second, we have 2592000 frames per day.
 
-Therefore, I thought it is essential to filter as much as possible. For this usecase, there were 1080 images initially, and with these input parameters, 712 images were removed.
+Therefore, I thought it is essential to filter as much as possible. For this use case, there were 1080 images initially, and with these input parameters, 712 images were removed.
 
 # Thank you!
 
