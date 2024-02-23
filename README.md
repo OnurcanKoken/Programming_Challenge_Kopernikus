@@ -91,3 +91,8 @@ Therefore, I thought it is essential to filter as much as possible. For this use
 Thank you, Perception Team of Kopernikus Automotive, for providing my the opportunity to present my solution.
 
 Onurcan Köken
+
+# Update
+
+To decrease the processing time, `similarity_dataset.py` and adjustable paramaters in `config.yaml` are updated.
+It is reduced from 30 min to 96 seconds. By using these new parameters, 760 images are removed. This can be decreased (or increased) by adjusting the parameters in the `config.yaml` file or adjusting the size of images in the `similarity_dataset.py` file.
